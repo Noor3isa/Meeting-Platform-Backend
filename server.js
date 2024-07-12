@@ -36,31 +36,29 @@ app.use(express.json());
 app.use(cookieParser());
 
 // routes
+app.use('/user', require('./routes/users'));
 app.use('/register', require('./routes/register'));
 app.use('/auth', require('./routes/auth'));
 app.use('/refresh', require('./routes/refresh'));
 app.use('/logout', require('./routes/logout'));
+app.use('/room', require('./routes/room'));
+app.use('/record', require('./routes/record'));
+app.use('/frame', require('./routes/frame'));
 
-// app.use(verifyJWT);
 
+
+app.use(verifyJWT);
 
 // Put all protected routes here
-// app.set('view engine', 'ejs');
-// app.set('views', __dirname + '/views');
-// app.set('layout', 'layouts/layout');
-// app.use(expressLayouts);
-// app.use(express.static('public'));
-// app.use('/', indexRouter)
 
-
-// app.all('*', (req, res) => {
-//     res.status(404);
-//     if (req.accepts('json')){
-//         res.json({"error": "404 Not Found"});
-//     } else {
-//         res.type('txt').send("404 Not found");
-//     }
-// })
+app.all('*', (req, res) => {
+    res.status(404);
+    if (req.accepts('json')){
+        res.json({"error": "404 Not Found"});
+    } else {
+        res.type('txt').send("404 Not found");
+    }
+})
 app.use(errorHandler);
 
 mongoose.connection.once('open', () => {
