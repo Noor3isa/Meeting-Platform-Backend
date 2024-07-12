@@ -9,7 +9,7 @@ const getAllUsers = async (req, res) => {
 }
 
 const deleteUser = async (req, res) => {
-    if (!req?.body?.username) return res.status(400).json({ "message": 'Username required' });
+    if (!req?.body?.username) return res.status(400).json({ 'message': 'Username required' });
     const user = await User.findOne({ username: req.body.username }).exec();
     if (!user) {
         return res.status(204).json({ 'message': `Username ${req.body.username} not found` });

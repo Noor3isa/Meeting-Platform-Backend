@@ -28,7 +28,7 @@ const handleFrame = async (req, res) => {
                         "username": username,
                         "frames": [
                             {
-                                "frame_timestamp": timestamp,
+                                "frame_timestamp": new Date(timestamp).toISOString(),
                                 "is_engaged": true,
                                 "body_language": true,
                                 "ext_tabs": null
@@ -37,16 +37,16 @@ const handleFrame = async (req, res) => {
                     }
                 ]
         });
-        res.sendStatus(201);
+        
         } 
         else if (foundRoomFrames) {
-            const user = await foundRoomFrames.users.find(user => user.username === username).exec();
+            const user = foundRoomFrames.users.find(user => user.username === username);
             if (!user) {
                 user = {
                     "username": username,
                     "frames": [
                         {
-                            "frame_timestamp": timestamp,
+                            "frame_timestamp": new Date(timestamp).toISOString(),
                             "is_engaged": true,
                             "body_language": true,
                             "ext_tabs": null
@@ -57,11 +57,11 @@ const handleFrame = async (req, res) => {
                 foundRoomFrames.users.push(user);
                 const result = await foundRoomFrames.save();
                 console.log(result);
-                res.sendStatus(201);
+                
                 
         } else if (user){
             const newFrame = {
-                "frame_timestamp": timestamp,
+                "frame_timestamp": new Date(timestamp).toISOString(),
                 "is_engaged": true,
                 "body_language": true,
                 "ext_tabs": null
@@ -70,23 +70,56 @@ const handleFrame = async (req, res) => {
             const result = await foundRoomFrames.save();
             console.log(result);
             // update inference
-            res.sendStatus(201);
+            
         }
 
         }
         // update inferences
-        const room = await Frame.findOne({room_id: room_id}).exec();
-        const user = await room.users.find(user => user.username === username);
-        const frame_to_update = await user.frames.find(frame => frame.frame_timestamp === timestamp);
-        const response = await getResponse(prompt, base64_image);
-        const jsonRes = await getJsonInference(response);
-        const is_engaged= jsonRes.is_engaged;
-        const body_language = jsonRes.body_language;
-        frame_to_update.is_engaged = is_engaged;
-        frame_to_update.body_language = body_language;
-        const result = await room.save();
-        console.log(`Saved result ${result}`);
-    } catch(err) {
+        const room = await Frame.findOne({ room_id: room_id }).exec();
+
+        if (!room) {
+            console.log('Room not found');
+            res.status(404).send('Room not found');
+            return;
+        }
+
+        const user = room.users.find(user => user.username === username);
+
+        if (!user) {
+            console.log('User not found');
+            res.status(404).send('User not found');
+            return;
+        }
+
+        const frame_to_update = user.frames.find(frame => frame.frame_timestamp === new Date(timestamp).toISOString());
+
+        if (!frame_to_update) {
+            console.log('Frame not found');
+            res.status(404).send('Frame not found');
+            return;
+        }
+
+        const image = {
+            inlineData: {
+                data: base64_image,
+                mimeType: "image/jpeg"
+            }
+        };
+
+        setTimeout(async () => {
+            const response = await getResponse(prompt, image);
+            const jsonRes = await getJsonInference(response);
+            const is_engaged = jsonRes.is_engaged;
+            const body_language = jsonRes.body_language;
+
+            frame_to_update.is_engaged = is_engaged;
+            frame_to_update.body_language = body_language;
+
+            const result = await room.save();
+            console.log(`Saved result ${result}`);
+            res.sendStatus(200);
+        }, 1000);
+    } catch(err){
         res.status(500).json({'error': err.message});
     }
 }

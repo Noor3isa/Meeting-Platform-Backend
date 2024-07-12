@@ -4,7 +4,7 @@ const Schema = mongoose.Schema;
 // Define the schema for individual frames
 const frameSchema = new Schema({
     frame_timestamp: {
-        type: Date,
+        type: String,
         required: true
     },
     is_engaged: {
@@ -22,16 +22,20 @@ const frameSchema = new Schema({
 }, { _id : false }); // Disabling _id for subdocuments
 
 // Define the schema for room data including frames
-const roomDataSchema = new Schema({
-    room_id: {
-        type: String,
-        required: true
-    },
+const usersSchema = new Schema({
     username: {
         type: String,
         required: true
     },
     frames: [frameSchema]
+}, { _id : false }); // Disabling _id for subdocuments
+
+const roomDataSchema = new Schema({
+    room_id: {
+        type: String,
+        required: true
+    },
+    users: [usersSchema]
 });
 
 module.exports = mongoose.model('RoomData', roomDataSchema);

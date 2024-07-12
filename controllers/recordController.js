@@ -19,15 +19,15 @@ const handleJoinRecord = async (req, res) => {
         res.sendStatus(201);
         } 
         else if (foundRecord) {
-            const userRecord = await foundRecord.records.find(record => record.username === username).exec();
+            const userRecord = foundRecord.records.find(record => record.username === username);
             if (!userRecord) {
-                userRecord = {
+                const newUserRecord = {
                     username: username,
                     join_times: [timestamp], // Initialize join_times array
                     leave_times: [] // Initialize leave_times array
                 };
     
-                foundRecord.records.push(userRecord);
+                foundRecord.records.push(newUserRecord);
                 const result = await foundRecord.save();
                 console.log(result);
         } else if (userRecord){
@@ -52,7 +52,7 @@ const handleLeaveRecord = async (req, res) => {
             return res.status(400).json({'error': 'Wrong meeting ID'});
         } 
         else if (foundRecord) {
-            const userRecord = await foundRecord.records.find(record => record.username === username).exec();
+            const userRecord = foundRecord.records.find(record => record.username === username);
             if (!userRecord) {
                 return res.status(400).json({'error': `User ${username} has not joined for them to leave`});
         } else if (userRecord){
@@ -60,7 +60,6 @@ const handleLeaveRecord = async (req, res) => {
             const result = await foundRecord.save();
             console.log(result);
         }
-
         }
     } catch(err) {
         res.status(500).json({'error': err.message});
