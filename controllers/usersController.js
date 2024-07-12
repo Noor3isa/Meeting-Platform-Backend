@@ -1,6 +1,6 @@
 const User = require('../models/User');
 const Room = require('../models/Room');
-const Report = require('../models/Report');
+const Record = require('../models/Record');
 
 const getAllUsers = async (req, res) => {
     const users = await User.find();
@@ -18,9 +18,10 @@ const deleteUser = async (req, res) => {
     res.json(result);
 }
 
-const getUser = async (req, res) => {
+const getReports = async (req, res) => {
     const {username, room_id} = req.params;
     if (!req?.params?.username) return res.status(400).json({ "message": 'Username required' });
+    try{
     const user = await User.findOne({ username: username }).exec();
     if (!user) {
         return res.status(204).json({ 'message': `Username ${username} not found` });
@@ -37,13 +38,36 @@ const getUser = async (req, res) => {
         }
         res.json(response);
     } else if(room_id){
-        const report = await Report.findOne({room_id: room_id}).exec();
-        res.json(report);
+        const room = await Room.findOne({room_id: room_id}).exec();
+        if (!room) {
+            return res.status(404).json({ error: 'Room not found' });
+        }
+        const records = await Record.find({ room_id: room_id }).exec();
+
+        if (!records) {
+            return res.status(404).json({ error: 'No records found for this room' });
+        }
+
+        res.json(room, records);
     }
+} catch(err) {
+    res.status(500).json({'error': err.message});
+}
+}
+
+const getUser = async (req, res) => {
+    const {room_id} = req.params;
+    if (!req?.params?.room_id) return res.status(400).json({ "message": 'Room ID required' });
+    const room = await Room.findOne({ room_id: room_id }).exec();
+    if (!room) {
+        return res.status(204).json({ 'message': `Room ${room} not found` });
+    }
+    return res.status(200).json({"host": room.host_name});
 }
 
 module.exports = {
     getAllUsers,
     deleteUser,
-    getUser
+    getUser,
+    getReports
 }

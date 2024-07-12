@@ -13,16 +13,40 @@ const roomSchema = new Schema({
         required: true
     },
     created_at: {
-        type: Date,
+        type: String,
         required: true
     },
     ended_at: {
-        type: Date,
+        type: String,
         required: false
     },
     participants_ids: {
         type: [String],
         required: true
+    },
+    effective_attendance: {
+        type: String,
+        default: null
+    },
+    engagement_levels: {
+        type: Number,
+        default: 0
+    },
+    mostly_engaged: {
+        type: Number,
+        default: 0
+    },
+    not_engaged: {
+        type: Number,
+        default: 0
+    },
+    positive_body_language: {
+        type: Number,
+        default: 0
+    },
+    opened_tabs: {
+        type: Number,
+        default: 0
     }
 });
 

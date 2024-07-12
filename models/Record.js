@@ -8,13 +8,33 @@ const recordSchema = new Schema({
         required: true
     },
     join_times: {
-        type: [Date],
+        type: [String],
         required: true
     },
     leave_times: {
-        type: [Date],
+        type: [String],
         required: false
-    }
+    },
+    effective_attendance: {
+        type: String,
+        default: null
+    },
+    total_frames: {
+        type: Number,
+        default: 0
+    },
+    engaged_frames: {
+        type: Number,
+        default: 0
+    },
+    total_body_language_positive: {
+        type: Number,
+        default: 0
+    },
+    total_ext_tabs: {
+        type: Number,
+        default: 0
+    } // Default to 0 if not provided
 }, { _id : false }); // Disabling _id for subdocuments
 const roomRecordSchema = new Schema({
     room_id: {

@@ -42,7 +42,7 @@ const handleFrame = async (req, res) => {
         else if (foundRoomFrames) {
             const user = foundRoomFrames.users.find(user => user.username === username);
             if (!user) {
-                user = {
+                const newUser = {
                     "username": username,
                     "frames": [
                         {
@@ -54,7 +54,7 @@ const handleFrame = async (req, res) => {
                     ]
                 };
                 
-                foundRoomFrames.users.push(user);
+                foundRoomFrames.users.push(newUser);
                 const result = await foundRoomFrames.save();
                 console.log(result);
                 

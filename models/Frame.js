@@ -17,7 +17,7 @@ const frameSchema = new Schema({
     },
     ext_tabs: {
         type: Boolean,
-        required: false
+        default: false
     }
 }, { _id : false }); // Disabling _id for subdocuments
 

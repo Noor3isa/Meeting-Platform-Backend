@@ -11,7 +11,7 @@ const handleJoinRecord = async (req, res) => {
                 "records": [
                     {
                         "username": username,
-                        "join_times": [timestamp],
+                        "join_times": [new Date(timestamp).toISOString()],
                         "leave_times": []
                     }
                 ]
@@ -23,7 +23,7 @@ const handleJoinRecord = async (req, res) => {
             if (!userRecord) {
                 const newUserRecord = {
                     username: username,
-                    join_times: [timestamp], // Initialize join_times array
+                    join_times: [new Date(timestamp).toISOString()], // Initialize join_times array
                     leave_times: [] // Initialize leave_times array
                 };
     
@@ -32,7 +32,7 @@ const handleJoinRecord = async (req, res) => {
                 console.log(result);
                 res.sendStatus(201);
         } else if (userRecord){
-            userRecord.join_times.push(timestamp);
+            userRecord.join_times.push(new Date(timestamp).toISOString());
             const result = await foundRecord.save();
             console.log(result);
             res.sendStatus(200);
@@ -58,7 +58,7 @@ const handleLeaveRecord = async (req, res) => {
             if (!userRecord) {
                 return res.status(400).json({'error': `User ${username} has not joined for them to leave`});
         } else if (userRecord){
-            userRecord.leave_times.push(timestamp);
+            userRecord.leave_times.push(new Date(timestamp).toISOString());
             const result = await foundRecord.save();
             console.log(result);
             res.sendStatus(200);

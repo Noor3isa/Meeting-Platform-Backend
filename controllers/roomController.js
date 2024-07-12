@@ -7,8 +7,7 @@ const handleRoom = async (req, res) => {
         const newRoom = await Room.create({
             "room_id": room_id,
             "host_name": host_name,
-            "created_at": created_at,
-            "ended_at": null,
+            "created_at": new Date(created_at).toISOString(),
             "participants_ids": [host_name]
     });
     res.sendStatus(201);

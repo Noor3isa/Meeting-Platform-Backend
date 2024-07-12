@@ -7,7 +7,10 @@ router.route('/')
     .delete(usersController.deleteUser); // DELETE /user/ => delete the user that's in the body
 
 router.route('/:username/:room_id?') // Optional room_id
-    .get(usersController.getUser); // if only username sent, we send back all room_ids
+    .get(usersController.getReports); // if only username sent, we send back all room_ids
                                     // if room_id sent, then we send this room's report data
+
+router.route('/:room_id') // GET /user/room_id => host_name
+    .get(usersController.getUser);
 
 module.exports = router;
