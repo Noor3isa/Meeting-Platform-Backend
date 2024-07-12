@@ -30,10 +30,12 @@ const handleJoinRecord = async (req, res) => {
                 foundRecord.records.push(newUserRecord);
                 const result = await foundRecord.save();
                 console.log(result);
+                res.sendStatus(201);
         } else if (userRecord){
             userRecord.join_times.push(timestamp);
             const result = await foundRecord.save();
             console.log(result);
+            res.sendStatus(200);
         }
 
         }
@@ -59,6 +61,7 @@ const handleLeaveRecord = async (req, res) => {
             userRecord.leave_times.push(timestamp);
             const result = await foundRecord.save();
             console.log(result);
+            res.sendStatus(200);
         }
         }
     } catch(err) {

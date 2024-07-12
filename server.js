@@ -44,8 +44,7 @@ app.use('/logout', require('./routes/logout'));
 app.use('/room', require('./routes/room'));
 app.use('/record', require('./routes/record'));
 app.use('/frame', require('./routes/frame'));
-
-
+app.use('/end', require('./routes/end'));
 
 app.use(verifyJWT);
 
