@@ -54,6 +54,7 @@ const handleSummary = async (req, res) => {
 
             // Format as "HH h MM m SS s"
             userRecord.effective_attendance = `${hours} h ${minutes} m ${seconds} s`;
+            effectiveAttendance = `${hours} h ${minutes} m ${seconds} s`;
         // Fetch frames from Frame collection
         const frames = await Frame.findOne({ room_id: room_id }).exec();
 
@@ -66,18 +67,31 @@ const handleSummary = async (req, res) => {
             const userFrames = frames.users.find(user => user.username === userRecord.username)?.frames || [];
 
             // Calculate total frames
-            userRecord.total_frames = userFrames.length;
+            // userRecord.total_frames = userFrames.length;
+            totalFrames = userFrames.length;
             
             // Calculate engaged frames and positive body language frames
-            userRecord.engaged_frames = userFrames.filter(frame => frame.is_engaged).length;
-            userRecord.total_body_language_positive = userFrames.filter(frame => frame.body_language).length;
+            // userRecord.engaged_frames = userFrames.filter(frame => frame.is_engaged).length;
+            engagedFrames = userFrames.filter(frame => frame.is_engaged).length;
+            // userRecord.total_body_language_positive = userFrames.filter(frame => frame.body_language).length;
+            positiveBodyLanguageFrames = userFrames.filter(frame => frame.body_language).length;
             
-            console.log(`User: ${userRecord.username}, Total Frames: ${userRecord.total_frames}, Engaged Frames: ${userRecord.engaged_frames}, Positive Body Language Frames: ${userRecord.total_body_language_positive}`);
+            // console.log(`User: ${userRecord.username}, Total Frames: ${userRecord.total_frames}, Engaged Frames: ${userRecord.engaged_frames}, Positive Body Language Frames: ${userRecord.total_body_language_positive}`);
+            await Record.updateOne(
+                { room_id: room_id, 'records.username': userRecord.username },
+                {
+                    $set: {
+                        'records.$.effective_attendance': effectiveAttendance,
+                        'records.$.total_frames': totalFrames,
+                        'records.$.engaged_frames': engagedFrames,
+                        'records.$.total_body_language_positive': positiveBodyLanguageFrames
+                    }
+                })
         });
         
         // await Promise.all(updateUserRecords);
         // record.markModified('records');
-        await record.save();
+        // await record.save();
 
         // Generate report
         // await generateReport(room_id);
