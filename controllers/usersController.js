@@ -59,6 +59,7 @@ const getUser = async (req, res) => {
     const {room_id} = req.params;
     if (!req?.params?.room_id) return res.status(400).json({ "message": 'Room ID required' });
     const room = await Room.findOne({ room_id: room_id }).exec();
+    console.log(room);
     if (!room) {
         return res.status(204).json({ 'message': `Room ${room} not found` });
     }

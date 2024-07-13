@@ -1,7 +1,7 @@
 const Record = require('../models/Record');
 const Room = require('../models/Room');
 const Frame = require('../models/Frame');
-const generateReport = require('./reportGenerationController');
+const {generateReport} = require('./reportGenerationController');
 
 const handleSummary = async (req, res) => {
     const { room_id, timestamp } = req.body;
@@ -94,7 +94,7 @@ const handleSummary = async (req, res) => {
         // await record.save();
 
         // Generate report
-        // await generateReport(room_id);
+        await generateReport(room_id);
 
         res.sendStatus(200);
     } catch (error) {
